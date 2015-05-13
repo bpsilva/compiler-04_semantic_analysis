@@ -23,6 +23,7 @@ struct hash *table[TAM];
 
 void print();
 struct hash* insert(char* text, int type);
+
 void initMe();
 int genAddress();
 
