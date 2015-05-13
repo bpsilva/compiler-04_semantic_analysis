@@ -1,0 +1,56 @@
+word a: 0;
+byte b: 0;
+word function () { }
+word function (	word a) { if(a>b) then a=5; }
+// UFRGS - Compiladores - Marcelo Johann - 2015/1
+
+word a:0;
+word v[10]:0 0 0 0 0 0 0 0 0 0; 
+word mat[1000];
+word $pt:0;
+
+word main()
+word i:0;
+word j:1;
+word a:0;
+word $pt:0;
+  {
+  output "Digite um numero: ";
+	input c;
+  loop (i=0; i<10; ++i)
+    {
+	input c;
+    a = incn(a,1);
+	return z;
+	return incn(a,1);
+    };
+  output "Incrementado algumas vezes fica ",a,"\n";
+  }
+
+word incn (word x, word n)
+  {
+  	return x*n;
+  }
+  
+/*word outra (word x, word n) 
+  {
+  	if (x < n) then return x+n else return x;
+  }
+*/
+word outra (word x, word n) 
+  {
+  if (x == n) then return x+n else return x;
+	return z;
+  }
+word maisuma ()
+  {
+  if (x < n) then return x+n else { return x; };
+  if (x > n) then return x-n else { return x; };
+  if (x <= n) then return x*n else { return x; };
+  if (x >= n) then return x/n else { return x; };
+  if (x != n) then return x+n else { return x; };
+  if (x == n) then return x+n else { return x; };
+	if (x || n) then return x+n else { return x; };
+if (x && n) then return x+n else { return x; };
+  }
+
