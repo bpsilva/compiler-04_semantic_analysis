@@ -224,12 +224,18 @@ int main(int argc, char **argv)
 	if(argc < 3)
 	{
 		printf("****Missing parameters***\n");
-		exit(10);
+		exit(1);
 	}
 		
 
 
 	yyin = fopen(argv[1], "r");
+	if (yyin==NULL)
+  	{
+    	printf("File \"%s\" not found!!\n", argv[1]);
+    	exit(2);
+  	}
+
 	file = fopen(argv[2], "w+");
 
 	out = yyparse();
@@ -240,6 +246,6 @@ int main(int argc, char **argv)
 }
 
 yyerror(s) char *s; {
-       fprintf( stderr, "Syntax error. Linha: %i\n", getLineNumber() );
+       fprintf( stderr, "Syntax error. Line: %i\n", getLineNumber() );
 	exit(3);
        }
