@@ -16,6 +16,7 @@ struct hash
 struct hash *prox;
 char* word;
 int type;
+int dataType;
 };
 
 struct hash *table[TAM];

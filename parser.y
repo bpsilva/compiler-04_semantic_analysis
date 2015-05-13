@@ -97,7 +97,7 @@ function_def:
 					,$3,$5,$6);}	
 	;
 
-command_list: '{' commands '}'		{$$ = astcreate(CMD_LIST,0,$2,0,0,0);}
+command_list: '{' commands '}'		{$$ = $2;}
 
 commands: 				{$$ = 0;}	
 	|simple_command ';' commands	{$$ = astcreate(CMDS,0,$1,$3,0,0);}	
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 	file = fopen(argv[2], "w+");
 
 	out = yyparse();
-	//printast(astree, 0);
+	printast(astree, 0);
 	asttofile(astree);
 	exit (out);
 
