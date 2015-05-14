@@ -67,7 +67,7 @@ program: 					{$$ = 0;}
 
 global_var_def: 	
 	SYMBOL_IDENTIFIER ':' value ';'	
-			{$$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
+			{printf("%s\n", $1->word);$$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
 				astcreate(SYMBOL_IDENTIFIER,$1,0,0,0,0),
 				$3,0,0);}	
 
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 	file = fopen(argv[2], "w+");
 
 	out = yyparse();
-	printast(astree, 0);
+	//printast(astree, 0);
 	asttofile(astree);
 	exit (out);
 

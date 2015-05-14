@@ -5,8 +5,11 @@
 #define TRUE 1
 #define FALSE 0
 #include<string.h>
-#include "y.tab.h"
 #include "hash.h"
+#include "y.tab.h"
+extern YYSTYPE yylval;
+
+
 
 
 int isRunning();
