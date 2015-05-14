@@ -48,8 +48,8 @@ extern FILE * yyin;
 %token <symbol>SYMBOL_LIT_STRING 6 
 %token  <symbol>SYMBOL_IDENTIFIER 7
 
-%type <astree> type init expression output_rest program  arg command_list simple_command atrib value  flux_control then else option local_var_def_list local_var_def param paramseq symbol_lit_seq commands func_body index_init
-%type <n> op
+%type <astree> init expression output_rest program  arg command_list simple_command atrib value  flux_control then else option local_var_def_list local_var_def param paramseq symbol_lit_seq commands func_body index_init
+%type <n> op type
 
 
  
@@ -62,28 +62,28 @@ init: program 		{astree = $1;}
 	;
 program: 					{$$ = 0;}
 	|type SYMBOL_IDENTIFIER  func_body program
-			{$$ = astcreate(FUNC_DEF,
+			{$2->dataType = $1; $$ = astcreate(FUNC_DEF,
 					0,
-					$1,	astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0)
+					0,	astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0)
 					,$3,$4);}	
 	|type SYMBOL_IDENTIFIER ':' value ';' program	
-			{$$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
-				$1, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
+			{$2->dataType = $1; $$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
+				0, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
 				$4,$6);}	
 	|type '$'SYMBOL_IDENTIFIER ':' value ';' program
-			{$$ = astcreate(GLOBAL_VAR_DEF_PTR, 0,
-				$1,	astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),
+			{$3->dataType = $1; $$ = astcreate(GLOBAL_VAR_DEF_PTR, 0,
+				0,	astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),
 				$5,$7);}		
 
 	|type SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']'';' program 	
-				{$$ = astcreate(GLOBAL_VAR_DEF_VEC,0,
-						$1,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
+				{$2->dataType = $1;$$ = astcreate(GLOBAL_VAR_DEF_VEC,0,
+						0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
 						astcreate( SYMBOL_LIT_INTEGER,$4,0,0,0,0),
 						$7);}
 
 	|type SYMBOL_IDENTIFIER index_init program
-				{$$ = astcreate(GLOBAL_VAR_DEF_VEC_INIT,0,
-						$1, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
+				{$2->dataType = $1; $$ = astcreate(GLOBAL_VAR_DEF_VEC_INIT,0,
+						0, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
 						$3,	$4);}		
 	;
 	
@@ -193,24 +193,24 @@ local_var_def_list:					{$$ = 0;}
 	|local_var_def local_var_def_list		{$$ = astcreate(LOCAL_VAR_DEF_LIST,0,$1,$2, 0,0);}
 	;
 
-local_var_def: type SYMBOL_IDENTIFIER ':' value ';' 	{$$ = astcreate(LOCAL_VAR_DEF,0,$1,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0), $4,0);}
-	|type '$'SYMBOL_IDENTIFIER ':' value ';'	{$$ = astcreate(LOCAL_VAR_DEF_PTR,0,$1,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0), $5,0);}
+local_var_def: type SYMBOL_IDENTIFIER ':' value ';' 	{$2->dataType = $1;$$ = astcreate(LOCAL_VAR_DEF,0,0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0), $4,0);}
+	|type '$'SYMBOL_IDENTIFIER ':' value ';'	{$3->dataType = $1;$$ = astcreate(LOCAL_VAR_DEF_PTR,0,0,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0), $5,0);}
 	;		
 param: 							{$$ = 0;}
-	|type SYMBOL_IDENTIFIER paramseq		{$$ = astcreate(PARAM,0,$1,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),$3,0);}
+	|type SYMBOL_IDENTIFIER paramseq		{$2->dataType = $1;$$ = astcreate(PARAM,0,0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),$3,0);}
 	;
 
 paramseq: 						{$$ = 0;}
-	| ',' type SYMBOL_IDENTIFIER paramseq		{$$ = astcreate(PARAM_SEQ,0,$2,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),$4,0);}
+	| ',' type SYMBOL_IDENTIFIER paramseq		{$3->dataType = $2;$$ = astcreate(PARAM_SEQ,0,0,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),$4,0);}
 	;
 
 symbol_lit_seq:  
 	value						{$$ = $1;}
 	|value symbol_lit_seq				{$$ = astcreate(SYMBOL_LIT_SEQ,0,$1,$2,0,0);}
 	; 
-type: 	KW_WORD		{$$ = astcreate(KW_WORD,0,0,0,0,0);}	
-	| KW_BOOL	{$$ = astcreate(KW_BOOL,0,0,0,0,0);}	
-	| KW_BYTE	{$$ = astcreate(KW_BYTE,0,0,0,0,0);}	
+type: 	KW_WORD		{$$ = KW_WORD;}	
+	| KW_BOOL	{$$ = KW_BOOL;}	
+	| KW_BYTE	{$$ = KW_BYTE;}	
 	;
 %%
 
