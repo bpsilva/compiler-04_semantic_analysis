@@ -11,60 +11,66 @@ void asttofile(astree_node* node)
 	switch(node->type)
 	{
 		
-		case GLOBAL_VAR_DEF: 
-			asttofile(node->sons[0]);
-			asttofile(node->sons[1]);
-			writechar('\n');
-			asttofile(node->sons[2]);
-			break;
-		case INI_FUNC_DEF:			
-			asttofile(node->sons[0]);
-			asttofile(node->sons[1]);
-			writechar('\n');
-			asttofile(node->sons[2]);
-			break;
 		case FUNC_DEF:	
-			filewrite(" ");		
 			asttofile(node->sons[0]);
-			filewrite("(");
+			filewrite(" ");	
 			asttofile(node->sons[1]);
-			filewrite(")");
-			writechar('\n');
 			asttofile(node->sons[2]);
+				
 			asttofile(node->sons[3]);
 			break;
-		case GLOBAL_VAR_DEF_INIT: 
-			writechar(' ');	
+		case FUNC_BODY:	
+			filewrite("(");
 			asttofile(node->sons[0]);
-			writechar(':');
+			filewrite(")");
 			asttofile(node->sons[1]);
-			writechar(';');
+			asttofile(node->sons[2]);
+			break;
+		case GLOBAL_VAR_DEF_INIT: 
+			asttofile(node->sons[0]);
+			writechar(' ');	
+			asttofile(node->sons[1]);
+			writechar(':');
+			asttofile(node->sons[2]);
+			filewrite(";\n");
+			asttofile(node->sons[3]);
 			break;
 		case GLOBAL_VAR_DEF_PTR:
+			asttofile(node->sons[0]);
 			writechar(' ');	
 			filewrite("$");	
-			asttofile(node->sons[0]);
-			writechar(':');
 			asttofile(node->sons[1]);
-			writechar(';');
+			writechar(':');
+			asttofile(node->sons[2]);
+			filewrite(";\n");
+			asttofile(node->sons[3]);
 			break;
 		case GLOBAL_VAR_DEF_VEC : 
-			writechar(' ');	
 			asttofile(node->sons[0]);
-			writechar('[');
+			writechar(' ');	
 			asttofile(node->sons[1]);
+			writechar('[');
+			asttofile(node->sons[2]);
 			writechar(']');
-			writechar(';');
+			filewrite(";\n");
+			asttofile(node->sons[3]);
 			break;
 		case GLOBAL_VAR_DEF_VEC_INIT: 
-			writechar(' ');	
 			asttofile(node->sons[0]);
-			writechar('[');
+			writechar(' ');	
 			asttofile(node->sons[1]);
-			filewrite("] :");
 			asttofile(node->sons[2]);
-			writechar(';');
+			filewrite(";\n");
+			asttofile(node->sons[3]);
 			break;
+		case INDEX_INIT:
+			writechar('[');
+			asttofile(node->sons[0]);
+			writechar(']');
+			filewrite(": ");	
+			asttofile(node->sons[1]);
+			asttofile(node->sons[2]);
+			break;	
 		case EXP_ADD: 
 			operationwrite("+",node);
 			break;
@@ -157,13 +163,12 @@ void asttofile(astree_node* node)
 			asttofile(node->sons[2]);
 			filewrite(";");
 			break;
-
 		case CMD_LIST : 
-			filewrite("{");		
+			filewrite("\n{\n");
 			asttofile(node->sons[0]);
-			filewrite("}");		
+			filewrite("}\n");
 			break;
-		case CMDS : 
+		case CMDS :
 			asttofile(node->sons[0]);
 			filewrite("; ");	
 			writechar('\n');
@@ -278,10 +283,9 @@ void asttofile(astree_node* node)
 			filewrite(" ; ");
 			asttofile(node->sons[2]);
 			filewrite(") ");
-			writechar('\n');
 			asttofile(node->sons[3]);
 			break;
-		default: printf("No rule applies");
+		default: printf("No rule applies: %i\n", node->type);
 	}
 	}
 

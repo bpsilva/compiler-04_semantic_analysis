@@ -48,7 +48,7 @@ extern FILE * yyin;
 %token <symbol>SYMBOL_LIT_STRING 6 
 %token  <symbol>SYMBOL_IDENTIFIER 7
 
-%type <astree> type init expression output_rest program global_var_def function_def  arg command_list simple_command atrib value  flux_control then else option local_var_def_list local_var_def param paramseq symbol_lit_seq commands 
+%type <astree> type init expression output_rest program  arg command_list simple_command atrib value  flux_control then else option local_var_def_list local_var_def param paramseq symbol_lit_seq commands func_body index_init
 %type <n> op
 
 
@@ -61,43 +61,42 @@ extern FILE * yyin;
 init: program 		{astree = $1;}
 	;
 program: 					{$$ = 0;}
-	|type function_def program		{$$ = astcreate(INI_FUNC_DEF,0,$1,$2,$3,0);}
-	|type global_var_def program		{$$ = astcreate(GLOBAL_VAR_DEF,0,$1,$2,$3,0);}
-	;
-
-global_var_def: 	
-	SYMBOL_IDENTIFIER ':' value ';'	
-			{printf("%s\n", $1->word);$$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
-				astcreate(SYMBOL_IDENTIFIER,$1,0,0,0,0),
-				$3,0,0);}	
-
-	|'$'SYMBOL_IDENTIFIER ':' value ';'
-			{$$ = astcreate(GLOBAL_VAR_DEF_PTR, 0,
-				astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
-				$4,0,0);}		
-
-	|SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']' ':' symbol_lit_seq ';' 
-				{$$ = astcreate(GLOBAL_VAR_DEF_VEC_INIT,0,
-						astcreate(SYMBOL_IDENTIFIER,$1,0,0,0,0),
-						astcreate( SYMBOL_LIT_INTEGER,$3,0,0,0,0),
-						$6,0);}		
-
-	|SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']'';'	 	
-				{$$ = astcreate(GLOBAL_VAR_DEF_VEC,0,
-						astcreate(SYMBOL_IDENTIFIER,$1,0,0,0,0),
-						astcreate( SYMBOL_LIT_INTEGER,$3,0,0,0,0),
-						0,0);}
-	;
-
-function_def: 
-	SYMBOL_IDENTIFIER '(' param ')' local_var_def_list  command_list 
+	|type SYMBOL_IDENTIFIER  func_body program
 			{$$ = astcreate(FUNC_DEF,
 					0,
-					astcreate(SYMBOL_IDENTIFIER,$1,0,0,0,0)
-					,$3,$5,$6);}	
-	;
+					$1,	astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0)
+					,$3,$4);}	
+	|type SYMBOL_IDENTIFIER ':' value ';' program	
+			{$$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
+				$1, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
+				$4,$6);}	
+	|type '$'SYMBOL_IDENTIFIER ':' value ';' program
+			{$$ = astcreate(GLOBAL_VAR_DEF_PTR, 0,
+				$1,	astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),
+				$5,$7);}		
 
-command_list: '{' commands '}'		{$$ = $2;}
+	|type SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']'';' program 	
+				{$$ = astcreate(GLOBAL_VAR_DEF_VEC,0,
+						$1,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
+						astcreate( SYMBOL_LIT_INTEGER,$4,0,0,0,0),
+						$7);}
+
+	|type SYMBOL_IDENTIFIER index_init program
+				{$$ = astcreate(GLOBAL_VAR_DEF_VEC_INIT,0,
+						$1, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
+						$3,	$4);}		
+	;
+	
+	index_init: '[' SYMBOL_LIT_INTEGER ']' ':' symbol_lit_seq ';' {$$ = astcreate(INDEX_INIT,0,astcreate(SYMBOL_LIT_INTEGER,$2,0,0,0,0), $5, 0, 0);}
+				;
+func_body: '(' param ')' local_var_def_list  command_list  {$$ = astcreate(FUNC_BODY,0,$2,$4,$5,0);}
+			;
+
+	
+
+
+
+command_list: '{' commands '}'		{$$ = astcreate(CMD_LIST,0,$2,0,0,0);}
 
 commands: 				{$$ = 0;}	
 	|simple_command ';' commands	{$$ = astcreate(CMDS,0,$1,$3,0,0);}	
