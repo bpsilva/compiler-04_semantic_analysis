@@ -46,7 +46,7 @@ struct hash* insert(char* text, int type){
 	struct hash *node = (struct hash*)malloc(sizeof(struct hash));
 	node->word = (char *)calloc(1,strlen(text)+1);
 	strcpy(node->word, text);
-
+	node->defcounter = 0;
 	node->prox = 0;
 	node->type = type;
 	

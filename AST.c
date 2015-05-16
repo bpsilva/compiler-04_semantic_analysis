@@ -16,6 +16,7 @@ astree_node* astcreate(int type, struct hash *symbol,  astree_node *son0,  astre
 	newnode->sons[1] = son1;
 	newnode->sons[2] = son2;
 	newnode->sons[3] = son3;
+	
 	return newnode;
 }
 

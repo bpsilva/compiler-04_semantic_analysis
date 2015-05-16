@@ -17,6 +17,7 @@ struct hash *prox;
 char* word;
 int type;
 int dataType;
+int defcounter;
 };
 
 struct hash *table[TAM];
