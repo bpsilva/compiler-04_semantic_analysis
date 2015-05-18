@@ -18,6 +18,7 @@ char* word;
 int type;
 int dataType;
 int defcounter;
+int natureza;
 };
 
 struct hash *table[TAM];
