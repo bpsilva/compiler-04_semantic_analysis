@@ -19,12 +19,15 @@ int type;
 int dataType;
 int defcounter;
 int natureza;
+int definitionline[20];
+int linenumber;
 };
+int ln;
 
 struct hash *table[TAM];
 
 void print();
-struct hash* insert(char* text, int type);
+struct hash* insert(char* text, int type, int line);
 
 void initMe();
 int genAddress();

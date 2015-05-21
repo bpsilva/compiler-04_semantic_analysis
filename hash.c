@@ -31,7 +31,7 @@ int i = 0;
 
 }
 
-struct hash* insert(char* text, int type){
+struct hash* insert(char* text, int type, int line){
 	int address = genAddress(text);
 	struct hash *pointer = table[address], *aux = table[address];
 
@@ -40,12 +40,18 @@ struct hash* insert(char* text, int type){
 	for(;pointer!=0; aux = pointer,	pointer= (struct hash*)pointer->prox)
 	{
 		if(!strcmp(text, pointer->word))
+		{
+		pointer->linenumber = line;	
+			
 			return pointer;
+		}
 	}
 	
 	struct hash *node = (struct hash*)malloc(sizeof(struct hash));
 	node->word = (char *)calloc(1,strlen(text)+1);
 	strcpy(node->word, text);
+		
+	
 	node->natureza = 0;
 	node->defcounter = 0;
 	node->prox = 0;

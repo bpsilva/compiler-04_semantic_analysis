@@ -66,10 +66,11 @@ init: program 		{astree = $1;}
 	;
 program: 					{$$ = 0;}
 	|type SYMBOL_IDENTIFIER  func_body program
-			{$2->natureza = NAT_FUNC;$2->defcounter++;$2->dataType = $1; $$ = astcreate(FUNC_DEF,
+			{printf("AQUI: %i\n", $2->linenumber); $$ = astcreate(FUNC_DEF,
 					0,
 					0,	astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0)
 					,$3,$4);}	
+
 	|type SYMBOL_IDENTIFIER ':' value ';' program	
 			{$2->natureza = NAT_ESC;$2->defcounter++;$2->dataType = $1; $$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
 				0, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),

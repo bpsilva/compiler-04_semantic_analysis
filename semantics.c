@@ -13,8 +13,17 @@ int definitionCounter(astree_node *node)
 		{
 			if(node->symbol->defcounter > 1)
 			{
+
+				printf("Multple definitions of %s. Lines: ", node->symbol->word);
+				
+				for(i = 0;i<node->symbol->defcounter;i++)
+				{
+					printf("%i ", node->symbol->definitionline[node->symbol->defcounter]);
+				}
+				printf("\n");
+				node->symbol->defcounter = 1;
 				semanticerror = 1;
-				//printf("Multple definitions %s\n", node->symbol->word);
+				
 			}
 			if(node->symbol->defcounter < 1)
 			{
@@ -24,6 +33,14 @@ int definitionCounter(astree_node *node)
 		}
 	}	
 	return 0;
+}
+
+void newdefinition(struct hash* node, int natureza, int dataType)
+{
+	node->natureza = natureza;
+	node->definitionline[node->defcounter] = node->linenumber;
+	node->defcounter++;
+	node->dataType = dataType;
 }
 
 int verifyNature(astree_node *node)

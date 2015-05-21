@@ -44,13 +44,13 @@ output				{return KW_OUTPUT;}
 "&&"				{return OPERATOR_AND;}
 "||"				{return OPERATOR_OR;}
 "\n"				{lineNumber++;}
-[0-9]+"."[0-9]+			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_FLOATING);return  SYMBOL_LIT_FLOATING;}
-[0-9]+ 				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_INTEGER);return SYMBOL_LIT_INTEGER;}
-FALSE				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_FALSE);return SYMBOL_LIT_FALSE;}
-TRUE				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_TRUE);return SYMBOL_LIT_TRUE;}
-[A-Za-z_][A-Za-z_0-9]*		{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_IDENTIFIER);return SYMBOL_IDENTIFIER;}
-"'"."'" 			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_CHAR);return SYMBOL_LIT_CHAR;}
-["].*["]			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_STRING);return SYMBOL_LIT_STRING;}
+[0-9]+"."[0-9]+			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_FLOATING, getLineNumber());return  SYMBOL_LIT_FLOATING;}
+[0-9]+ 				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_INTEGER, getLineNumber());return SYMBOL_LIT_INTEGER;}
+FALSE				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_FALSE, getLineNumber());return SYMBOL_LIT_FALSE;}
+TRUE				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_TRUE, getLineNumber());return SYMBOL_LIT_TRUE;}
+[A-Za-z_][A-Za-z_0-9]*		{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_IDENTIFIER, getLineNumber()); return SYMBOL_IDENTIFIER;}
+"'"."'" 			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_CHAR, getLineNumber());return SYMBOL_LIT_CHAR;}
+["].*["]			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_STRING, getLineNumber());return SYMBOL_LIT_STRING;}
 " "
 "\t"				
 "//".*
