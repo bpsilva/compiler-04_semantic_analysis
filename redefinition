@@ -1,7 +1,10 @@
-word function (	) { }
-word function (	) { }
+
+word $foo:2;
+
+word function (	) 
+{
 
 
-word function (	) { }
-word function (	) { }
+return foo ( );
+ }
 

@@ -66,28 +66,28 @@ init: program 		{astree = $1;}
 	;
 program: 					{$$ = 0;}
 	|type SYMBOL_IDENTIFIER  func_body program
-			{printf("AQUI: %i\n", $2->linenumber); $$ = astcreate(FUNC_DEF,
+			{ newdefinition($2, NAT_FUNC, $1); $$ = astcreate(FUNC_DEF,
 					0,
 					0,	astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0)
 					,$3,$4);}	
 
 	|type SYMBOL_IDENTIFIER ':' value ';' program	
-			{$2->natureza = NAT_ESC;$2->defcounter++;$2->dataType = $1; $$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
+			{newdefinition($2, NAT_ESC, $1); $$ = astcreate(GLOBAL_VAR_DEF_INIT, 0,
 				0, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
 				$4,$6);}	
 	|type '$'SYMBOL_IDENTIFIER ':' value ';' program
-			{$3->natureza = NAT_PTR; $3->defcounter++;$3->dataType = $1; $$ = astcreate(GLOBAL_VAR_DEF_PTR, 0,
+			{newdefinition($3, NAT_PTR, $1); $$ = astcreate(GLOBAL_VAR_DEF_PTR, 0,
 				0,	astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),
 				$5,$7);}		
 
 	|type SYMBOL_IDENTIFIER '[' SYMBOL_LIT_INTEGER ']'';' program 	
-				{$2->natureza = NAT_VEC;$2->defcounter++;$2->dataType = $1;$$ = astcreate(GLOBAL_VAR_DEF_VEC,0,
+				{newdefinition($2, NAT_VEC, $1);$$ = astcreate(GLOBAL_VAR_DEF_VEC,0,
 						0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
 						astcreate( SYMBOL_LIT_INTEGER,$4,0,0,0,0),
 						$7);}
 
 	|type SYMBOL_IDENTIFIER index_init program
-				{$2->natureza = NAT_VEC;$2->defcounter++;$2->dataType = $1; $$ = astcreate(GLOBAL_VAR_DEF_VEC_INIT,0,
+				{newdefinition($2, NAT_VEC, $1); $$ = astcreate(GLOBAL_VAR_DEF_VEC_INIT,0,
 						0, astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),
 						$3,	$4);}		
 	;
@@ -198,15 +198,16 @@ local_var_def_list:					{$$ = 0;}
 	|local_var_def local_var_def_list		{$$ = astcreate(LOCAL_VAR_DEF_LIST,0,$1,$2, 0,0);}
 	;
 
-local_var_def: type SYMBOL_IDENTIFIER ':' value ';' 	{$2->natureza = NAT_ESC;$2->defcounter++;$2->dataType = $1;$$ = astcreate(LOCAL_VAR_DEF,0,0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0), $4,0);}
-	|type '$'SYMBOL_IDENTIFIER ':' value ';'	{$3->natureza = NAT_PTR;$3->defcounter++;$3->dataType = $1;$$ = astcreate(LOCAL_VAR_DEF_PTR,0,0,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0), $5,0);}
+local_var_def: 
+	type SYMBOL_IDENTIFIER ':' value ';' 	{newdefinition($2, NAT_ESC, $1);$$ = astcreate(LOCAL_VAR_DEF,0,0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0), $4,0);}
+	|type '$'SYMBOL_IDENTIFIER ':' value ';'	{newdefinition($3, NAT_PTR, $1);$$ = astcreate(LOCAL_VAR_DEF_PTR,0,0,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0), $5,0);}
 	;		
 param: 							{$$ = 0;}
-	|type SYMBOL_IDENTIFIER paramseq		{$2->defcounter++;$2->dataType = $1;$$ = astcreate(PARAM,0,0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),$3,0);}
+	|type SYMBOL_IDENTIFIER paramseq		{newdefinition($2, NAT_ESC, $1);$$ = astcreate(PARAM,0,0,astcreate(SYMBOL_IDENTIFIER,$2,0,0,0,0),$3,0);}
 	;
 
 paramseq: 						{$$ = 0;}
-	| ',' type SYMBOL_IDENTIFIER paramseq		{$3->defcounter++;$3->dataType = $2;$$ = astcreate(PARAM_SEQ,0,0,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),$4,0);}
+	| ',' type SYMBOL_IDENTIFIER paramseq		{newdefinition($3, NAT_FUNC, $2);$$ = astcreate(PARAM_SEQ,0,0,astcreate(SYMBOL_IDENTIFIER,$3,0,0,0,0),$4,0);}
 	;
 
 symbol_lit_seq:  
@@ -246,6 +247,7 @@ int main(int argc, char **argv)
 	//printast(astree, 0);
 	//asttofile(astree);
 	definitionCounter(astree);
+	verifyNature(astree);
 	if(!semanticerror)
 	{
 		exit (out);	
