@@ -36,7 +36,21 @@ void newdefinition(struct hash* node, int natureza, int dataType)
 	node->defcounter++;
 	node->dataType = dataType;
 }
-
+void natcompare(astree_node* node, char* text)
+{
+			if(node->sons[0]->symbol->natureza != NAT_FUNC)
+			{semanticerror =1;
+				printf("'%s' is used as %s but it was defined as a ", node->sons[0]->symbol->word, text);
+			
+				switch(node->sons[0]->symbol->natureza)
+				{
+					case NAT_FUNC:printf("function.\n"); break;
+					case NAT_VEC:printf("vector.\n"); break;
+					case NAT_ESC:printf("scalar.\n"); break;
+					case NAT_PTR:printf("pointer.\n"); break;
+				}
+			}
+}
 int verifyNature(astree_node *node)
 {
 	int i;
@@ -77,18 +91,7 @@ int verifyNature(astree_node *node)
 
 			break;
 		case EXP_FUNC_CALL:
-		if(node->sons[0]->symbol->natureza != NAT_FUNC)
-			{semanticerror =1;
-				printf("'%s' is used as function call but it was defined as a ", node->sons[0]->symbol->word);
-			
-				switch(node->sons[0]->symbol->natureza)
-				{
-					case NAT_FUNC:printf("function.\n"); break;
-					case NAT_VEC:printf("vector.\n"); break;
-					case NAT_ESC:printf("scalar.\n"); break;
-					case NAT_PTR:printf("pointer.\n"); break;
-				}
-			}
+			natcompare(node, "function call");
 			break;
 		case ARG_SEQ : 
 
@@ -148,6 +151,7 @@ int verifyNature(astree_node *node)
 		case OPERATOR_LE : 
 
 			break;
+
 		case OPERATOR_GE : 
 
 			break;
@@ -183,7 +187,6 @@ int verifyNature(astree_node *node)
 			break;
 		case SYMBOL_IDENTIFIER: 
 
-		
 			break;
 		case KW_IF: 
 
