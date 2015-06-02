@@ -36,9 +36,9 @@ void newdefinition(struct hash* node, int natureza, int dataType)
 	node->defcounter++;
 	node->dataType = dataType;
 }
-void natcompare(astree_node* node, char* text)
+void natcompare(astree_node* node, char* text, int nat)
 {
-			if(node->sons[0]->symbol->natureza != NAT_FUNC)
+			if(node->sons[0]->symbol->natureza != nat)
 			{semanticerror =1;
 				printf("'%s' is used as %s but it was defined as a ", node->sons[0]->symbol->word, text);
 			
@@ -53,19 +53,17 @@ void natcompare(astree_node* node, char* text)
 }
 int verifyNature(astree_node *node)
 {
-	int i;
+
+	int i, flag = 1;
 	if(node !=0)
 	{
-		for(i = 0 ; i < 4  ; i++)
-		{
-			verifyNature(node->sons[i]);
-		}
+
 	
 		switch(node->type)
 		{
 		
 		case FUNC_DEF:	
-			
+			flag = 0;
 			break;
 		case FUNC_BODY:	
 			
@@ -88,10 +86,12 @@ int verifyNature(astree_node *node)
 			break;	
 		
 		case EXP_ARRAY_ACCESS: 
-
+			natcompare(node, "array access", NAT_VEC);
+			flag = 0;
 			break;
 		case EXP_FUNC_CALL:
-			natcompare(node, "function call");
+			natcompare(node, "function call", NAT_FUNC);
+			flag = 0;
 			break;
 		case ARG_SEQ : 
 
@@ -168,7 +168,8 @@ int verifyNature(astree_node *node)
 
 			break;
 		case EXP_PTR: 
-
+			natcompare(node, "pointer", NAT_PTR);
+			flag = 0;
 			break;
 		case SYMBOL_LIT_INTEGER:
 		
@@ -185,7 +186,19 @@ int verifyNature(astree_node *node)
 		case SYMBOL_LIT_STRING:
 		
 			break;
-		case SYMBOL_IDENTIFIER: 
+		case SYMBOL_IDENTIFIER:
+		if(node->symbol->natureza != NAT_ESC)
+			{semanticerror =1;
+				printf("'%s' is used as scalar but it was defined as a ", node->symbol->word);
+			
+				switch(node->symbol->natureza)
+				{
+					case NAT_FUNC:printf("function.\n"); break;
+					case NAT_VEC:printf("vector.\n"); break;
+					case NAT_ESC:printf("scalar.\n"); break;
+					case NAT_PTR:printf("pointer.\n"); break;
+				}
+			} 
 
 			break;
 		case KW_IF: 
@@ -202,7 +215,15 @@ int verifyNature(astree_node *node)
 
 			break;
 		default: printf("No rule applies: %i\n", node->type);
-		}	
+		}
+
+		if(flag)	
+		{
+			for(i = 0 ; i < 4  ; i++)
+			{
+			verifyNature(node->sons[i]);
+			}
+		}
 
 	}
 return 0;

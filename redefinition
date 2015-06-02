@@ -1,10 +1,10 @@
 
-word $foo:2;
+word $foo: 5;
 
 word function (	) 
 {
+return foo();
 
 
-return foo ( );
  }
 
