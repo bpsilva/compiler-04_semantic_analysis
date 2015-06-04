@@ -1,6 +1,6 @@
 
 word foo(word c){
-	output function(3);
+	output functi();
 }
 
 word function (word a) 

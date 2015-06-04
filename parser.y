@@ -245,17 +245,19 @@ int main(int argc, char **argv)
 
 	file = fopen(argv[2], "w+");
 
-	out = yyparse();
-	//printast(astree, 0);
+	//Syntax analysis
+	yyparse();
+	
 	//asttofile(astree);
+
+	//Semantic analysis
 	definitionCounter(astree);
 	verifyNature(astree);
 	compare_param_args(astree);
-	if(!semanticerror)
+	
+	if(semanticerror)
 	{
-		exit (out);	
-	}else{
-		printf("Erro semantico\n");
+		fprintf( stderr, "Semantic error.\n", getLineNumber() );
 		exit(4);
 	}
 	
