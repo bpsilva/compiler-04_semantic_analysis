@@ -1,9 +1,12 @@
 
-word foo(){}
+word foo(word c){
+	output function(3);
+}
 
-word function (	) 
+word function (word a) 
 {
-if (foo(32,121, asd, foo) > 5) 
+
+if (foo(32) > 5) 
 	then { };
 output "Aasdad";
 

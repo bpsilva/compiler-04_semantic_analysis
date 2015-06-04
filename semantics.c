@@ -217,7 +217,94 @@ int verifyNature(astree_node *node)
 	}
 return 0;
 }
+int count_param(astree_node *node)
+{
+	if(node==0)
+	{
+		return 0;
+	}
+	switch(node->type)
+	{
+		case FUNC_BODY:	
+			return count_param(node->sons[0]);
+		case PARAM: 
+		case PARAM_SEQ: 
+			return 1 + count_param(node->sons[2]);	
+	}
 
+	return 1000000;
+}
+void search_func_def(astree_node *node)
+{
+	int i = 0;
+	if(node !=0)
+	{
+		if(node->type == FUNC_DEF )
+		{
+			node->sons[1]->symbol->amount_of_param =  count_param(node->sons[2]);
+
+		}
+
+		for(;i<4;i++)
+		{
+				search_func_def(node->sons[i]);
+		}
+		
+	}
+}
+
+int count_arg(astree_node *node)
+{
+
+	if(node==0)
+	{
+		return 0;
+	}
+	switch(node->type)
+	{
+		case ARG_SEQ: 
+			return 1 + count_arg(node->sons[1]);	
+		case SYMBOL_LIT_INTEGER:	
+		case SYMBOL_LIT_FALSE:
+		case SYMBOL_LIT_TRUE:
+		case SYMBOL_LIT_CHAR:
+		case SYMBOL_LIT_STRING: 
+			return 1;	
+	}
+
+	return 1000000;
+}
+void search_func_call(astree_node *node)
+{
+int i = 0, count;
+	if(node !=0)
+	{
+		if(node->type == EXP_FUNC_CALL)
+		{
+			count = count_arg(node->sons[1]);
+			if(node->sons[0]->symbol->amount_of_param == count)
+				{
+					
+					//printf("igual: %s\n", node->sons[0]->symbol->word);
+				}else{
+					semanticerror = 1;
+					printf("'%s' is called with %i arguments, but it was defined with %i parameters.\n", node->sons[0]->symbol->word, count, node->sons[0]->symbol->amount_of_param);
+				}
+			
+		}
+		for(;i<4;i++)
+		{
+				search_func_call(node->sons[i]);
+		}
+		
+	}
+}
+
+void compare_param_args(astree_node *node)
+{
+	search_func_def(node);
+	search_func_call(node);
+}
 /*if(node->symbol->natureza == 0)
 	{
 		switch(node->type)

@@ -250,6 +250,7 @@ int main(int argc, char **argv)
 	//asttofile(astree);
 	definitionCounter(astree);
 	verifyNature(astree);
+	compare_param_args(astree);
 	if(!semanticerror)
 	{
 		exit (out);	
