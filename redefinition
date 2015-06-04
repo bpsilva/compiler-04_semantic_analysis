@@ -1,9 +1,11 @@
 
-word $foo: 5;
+word foo(){}
 
 word function (	) 
 {
-return foo();
+if (foo(32,121, asd, foo) > 5) 
+	then { };
+output "Aasdad";
 
 
  }

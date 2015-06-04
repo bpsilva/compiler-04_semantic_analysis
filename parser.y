@@ -31,7 +31,9 @@ extern FILE * yyin;
 %token NAT_VEC 517
 %token NAT_ESC 518
 %token NAT_PTR 519
+%token NAT_PTR_ADDR 520
 %token TOKEN_ERROR 
+%token COUNT_DEF_ERROR 1500
 
 %union
 {
