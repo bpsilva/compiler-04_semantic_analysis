@@ -22,6 +22,7 @@ int natureza;
 int definitionline[20];
 int linenumber;
 int amount_of_param;
+int param_types[20];
 };
 int ln;
 

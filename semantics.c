@@ -241,11 +241,22 @@ void search_func_def(astree_node *node)
 	{
 		if(node->type == FUNC_DEF )
 		{
+
+			for(i = 0;i<20;i++)
+			{
+				node->sons[1]->symbol->param_types[i] = 0;
+			}	
+			types_param(node, node->sons[2], 0);//preencher lista com os tipos dos parâmetros
 			node->sons[1]->symbol->amount_of_param =  count_param(node->sons[2]);
 
+			for(i = 0;i<20;i++)
+			{
+				printf("%i ", node->sons[1]->symbol->param_types[i]);
+			}	
+			printf("\n");
 		}
 
-		for(;i<4;i++)
+		for(i = 0;i<4;i++)
 		{
 				search_func_def(node->sons[i]);
 		}
@@ -269,6 +280,7 @@ int count_arg(astree_node *node)
 		case SYMBOL_LIT_TRUE:
 		case SYMBOL_LIT_CHAR:
 		case SYMBOL_LIT_STRING: 
+		case SYMBOL_IDENTIFIER:
 			return 1;	
 	}
 
@@ -284,7 +296,7 @@ int i = 0, count;
 			count = count_arg(node->sons[1]);
 			if(node->sons[0]->symbol->amount_of_param == count)
 				{
-					
+					compare_param_args_types(node->sons[1], node->sons[0]->symbol->param_types, 0)
 					//printf("igual: %s\n", node->sons[0]->symbol->word);
 				}else{
 					semanticerror = 1;
@@ -305,6 +317,60 @@ void compare_param_args(astree_node *node)
 	search_func_def(node);
 	search_func_call(node);
 }
+
+void types_param(astree_node *fun_def, astree_node *node, int index)
+{
+	if(node!=0)
+	switch(node->type)
+	{
+		case FUNC_BODY:
+			types_param(fun_def, node->sons[0], index);
+			break;		
+		case PARAM:
+		case PARAM_SEQ:
+			fun_def->sons[1]->symbol->param_types[index] = node->sons[1]->symbol->dataType;
+			types_param(fun_def, node->sons[2], index+1);
+			break;
+	}
+
+}
+int compatible_types(int arg, int param)
+{
+	if((arg == SYMBOL_LIT_INTEGER || arg == SYMBOL_LIT_CHAR) && (param == KW_WORD || param == KW_BYTE))
+		return 1;
+
+	if((arg == SYMBOL_LIT_TRUE || arg == SYMBOL_LIT_FALSE) && param == KW_BOOL)
+		return 1;
+
+	return 0;
+}
+
+void compare_param_args_types(astree_node *node, int param[20], int index)
+{
+	
+	if(node!=0)
+	{
+	switch(node->type)
+	{
+		case ARG_SEQ: 
+			node->	
+		case SYMBOL_LIT_INTEGER:	
+		case SYMBOL_LIT_FALSE:
+		case SYMBOL_LIT_TRUE:
+		case SYMBOL_LIT_CHAR:
+		case SYMBOL_LIT_STRING: 
+		case SYMBOL_IDENTIFIER:
+			return 1;	
+		}
+	}
+
+	
+
+	return 1000000;
+
+}
+
+
 /*if(node->symbol->natureza == 0)
 	{
 		switch(node->type)
