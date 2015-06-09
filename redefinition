@@ -1,12 +1,13 @@
 
-word foo(word c, bool sd, byte oi){
-	output function("oi");
+
+word foo(bool sd){
+	output function(FALSE);
 }
 
 word function (bool a) 
 {
 
-if (foo(32, 09, 6) > 5) 
+if (foo(a) > 5) 
 	then { };
 output "Aasdad";
 

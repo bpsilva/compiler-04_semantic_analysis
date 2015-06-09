@@ -215,7 +215,7 @@ int verifyNature(astree_node *node)
 			verifyNature(node->sons[1]);
 		}
 	}
-return 0;
+	return 0;
 }
 int count_param(astree_node *node)
 {
@@ -296,7 +296,7 @@ int i = 0, count;
 			count = count_arg(node->sons[1]);
 			if(node->sons[0]->symbol->amount_of_param == count)
 				{
-					compare_param_args_types(node->sons[1], node->sons[0]->symbol->param_types, 0)
+					compare_param_args_types(node->sons[1], node->sons[0]->symbol->param_types, 0);
 					//printf("igual: %s\n", node->sons[0]->symbol->word);
 				}else{
 					semanticerror = 1;
@@ -342,8 +342,11 @@ int compatible_types(int arg, int param)
 	if((arg == SYMBOL_LIT_TRUE || arg == SYMBOL_LIT_FALSE) && param == KW_BOOL)
 		return 1;
 
+	printf("Unmatching types.\n");
 	return 0;
 }
+
+
 
 void compare_param_args_types(astree_node *node, int param[20], int index)
 {
@@ -353,20 +356,23 @@ void compare_param_args_types(astree_node *node, int param[20], int index)
 	switch(node->type)
 	{
 		case ARG_SEQ: 
-			node->	
-		case SYMBOL_LIT_INTEGER:	
+			compare_param_args_types(node->sons[0], param, index);//primeiro parametro da lista
+			compare_param_args_types(node->sons[1], param, index+1);//segundo parametro da lista
+			break;	
+		case SYMBOL_LIT_INTEGER:				
 		case SYMBOL_LIT_FALSE:
 		case SYMBOL_LIT_TRUE:
 		case SYMBOL_LIT_CHAR:
-		case SYMBOL_LIT_STRING: 
+			compatible_types(node->type, param[index]);
+			break;
 		case SYMBOL_IDENTIFIER:
-			return 1;	
+		printf("%i", node->symbol->type);
+			compatible_types(node->symbol->type, param[index]);// ****descobrir como fazer isso****
+			
+			break;			
 		}
 	}
-
 	
-
-	return 1000000;
 
 }
 
