@@ -1,15 +1,15 @@
 
 
-word foo(bool sd){
-	output function(FALSE);
+word foo(word sd){
+	output function();
 }
-
-word function (bool a) 
+byte a: 20;
+word function () 
 {
 
 if (foo(a) > 5) 
 	then { };
-output "Aasdad";
+output "Aasdad","oi";
 
 
  }

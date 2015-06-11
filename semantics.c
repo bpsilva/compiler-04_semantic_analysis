@@ -249,11 +249,6 @@ void search_func_def(astree_node *node)
 			types_param(node, node->sons[2], 0);//preencher lista com os tipos dos parâmetros
 			node->sons[1]->symbol->amount_of_param =  count_param(node->sons[2]);
 
-			for(i = 0;i<20;i++)
-			{
-				printf("%i ", node->sons[1]->symbol->param_types[i]);
-			}	
-			printf("\n");
 		}
 
 		for(i = 0;i<4;i++)
@@ -342,7 +337,8 @@ int compatible_types(int arg, int param)
 	if((arg == SYMBOL_LIT_TRUE || arg == SYMBOL_LIT_FALSE) && param == KW_BOOL)
 		return 1;
 
-	printf("Unmatching types.\n");
+	printf("Unmatching types between function parameters and arguments.\n");
+	semanticerror = 1;
 	return 0;
 }
 
@@ -366,9 +362,15 @@ void compare_param_args_types(astree_node *node, int param[20], int index)
 			compatible_types(node->type, param[index]);
 			break;
 		case SYMBOL_IDENTIFIER:
-		printf("%i", node->symbol->type);
-			compatible_types(node->symbol->type, param[index]);// ****descobrir como fazer isso****
-			
+		
+
+			if(!((node->symbol->dataType == KW_BOOL && param[index] == KW_BOOL)||
+				((node->symbol->dataType == KW_WORD || node->symbol->dataType == KW_BYTE) && 
+				(param[index] == KW_WORD || param[index] == KW_BYTE))))
+				{
+					semanticerror = 1;
+					printf("Unmatching types between function parameters and arguments.\n");				
+				}	
 			break;			
 		}
 	}

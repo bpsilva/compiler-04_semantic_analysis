@@ -50,7 +50,7 @@ FALSE				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_FALSE, getLin
 TRUE				{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_TRUE, getLineNumber());return SYMBOL_LIT_TRUE;}
 [A-Za-z_][A-Za-z_0-9]*		{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_IDENTIFIER, getLineNumber()); return SYMBOL_IDENTIFIER;}
 "'"."'" 			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_CHAR, getLineNumber());return SYMBOL_LIT_CHAR;}
-["].*["]			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_STRING, getLineNumber());return SYMBOL_LIT_STRING;}
+["][^"]*["]			{yylval.symbol = (struct hash*)insert(yytext,  SYMBOL_LIT_STRING, getLineNumber());return SYMBOL_LIT_STRING;}
 " "
 "\t"				
 "//".*
