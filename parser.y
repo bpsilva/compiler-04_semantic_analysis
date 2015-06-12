@@ -254,10 +254,11 @@ int main(int argc, char **argv)
 	definitionCounter(astree);
 	verifyNature(astree);
 	compare_param_args(astree);
-	
+	compare_func_type_return(astree);
+
 	if(semanticerror)
 	{
-		fprintf( stderr, "Semantic error.\n", getLineNumber() );
+		fprintf( stderr, "Semantic error.\n");
 		exit(4);
 	}
 	

@@ -292,6 +292,8 @@ int i = 0, count;
 			if(node->sons[0]->symbol->amount_of_param == count)
 				{
 					compare_param_args_types(node->sons[1], node->sons[0]->symbol->param_types, 0);
+					compare_func_type_return(node);
+
 					//printf("igual: %s\n", node->sons[0]->symbol->word);
 				}else{
 					semanticerror = 1;
@@ -337,8 +339,6 @@ int compatible_types(int arg, int param)
 	if((arg == SYMBOL_LIT_TRUE || arg == SYMBOL_LIT_FALSE) && param == KW_BOOL)
 		return 1;
 
-	printf("Unmatching types between function parameters and arguments.\n");
-	semanticerror = 1;
 	return 0;
 }
 
@@ -359,7 +359,11 @@ void compare_param_args_types(astree_node *node, int param[20], int index)
 		case SYMBOL_LIT_FALSE:
 		case SYMBOL_LIT_TRUE:
 		case SYMBOL_LIT_CHAR:
-			compatible_types(node->type, param[index]);
+			if(!compatible_types(node->type, param[index]))
+			{
+				printf("Unmatching types between function parameters and arguments.\n");
+				semanticerror = 1;
+			}
 			break;
 		case SYMBOL_IDENTIFIER:
 		
@@ -374,11 +378,151 @@ void compare_param_args_types(astree_node *node, int param[20], int index)
 			break;			
 		}
 	}
-	
-
 }
 
 
+
+void compare_func_type_return(astree_node *node)
+{
+	int return_type;
+	int i;
+	if(node == 0)
+		return;
+
+	if(node->type == FUNC_DEF)
+	{
+		return_type = find_func_return_type(node->sons[2]->sons[2]->sons[0], 0);
+		if(return_type == 0)
+		{
+			semanticerror = 1;
+				printf("Every function must have a return statement.\n");		
+		}else
+		{
+		
+			if(!(
+				(compatible_types(return_type , node->sons[1]->symbol->dataType)) || 
+				((return_type == KW_BYTE && node->symbol->dataType == KW_WORD) || (node->sons[1]->symbol->dataType == return_type ))
+				)
+		  	)
+			{
+				semanticerror = 1;
+				printf("Returning type doesn't match function definition type in function '%s'.\n", node->sons[1]->symbol->word);			
+			}
+		}
+	}
+	for(i = 0 ; i < 4 ; i++)
+	{
+		compare_func_type_return(node->sons[i]);
+	}
+}
+
+
+int find_func_return_type(astree_node *node, int count)
+{
+int ret1 = 0, ret2 = 0, i, j;
+
+	if(node==0)
+		return 0;
+	
+	if(node->type == KW_RETURN)
+	{
+
+		return expression_type(node->sons[0]);
+	}
+	if(node->type == CMDS)
+	{		
+		ret1 = find_func_return_type(node->sons[0], 0);
+		ret2 = find_func_return_type(node->sons[1], 0);
+		if(ret1 == ret2 && ret1 != 0 && ret2 != 0)
+		{
+			return ret1;
+		}else{ 
+
+			if(ret1 != 0 && ret2 == 0)
+				return ret1;
+			if(ret1 == 0 && ret2 != 0)
+				return ret2;
+
+			return 0;
+			}
+
+	}
+	
+		
+	int aux[4];
+	for(i = 0 ; i < 4 ; i++)
+	{
+		aux[i] = find_func_return_type(node->sons[i], 0);
+	}
+
+	int equals = 1, not_null = 0;
+	for(i = 0 ; i < 4 ; i++)
+	{
+		for(j = i ; j < 4 ; j++)
+		{	
+			if(aux[i] != 0 && aux[j] != 0)
+			{
+				not_null = aux[i];
+				if(aux[i] != aux[j])
+				{
+					equals = 0;
+				}
+			}
+		}	
+	}
+
+	if(equals && not_null)
+	{
+
+		return not_null;
+	}
+
+
+	return 0;
+}
+
+int expression_type(astree_node* node)
+{
+
+	if(node==0)
+		return 0;
+	switch(node->type)
+	{
+		case SYMBOL_LIT_INTEGER:
+		case SYMBOL_LIT_FALSE:
+		case SYMBOL_LIT_TRUE: 
+		case SYMBOL_LIT_CHAR: 
+			return node->type; 
+		case SYMBOL_LIT_STRING: 
+			semanticerror = 1; 
+			printf("Strings must be user only in output expressions!");
+			return KW_BYTE;
+		case EXP_ARRAY_ACCESS:
+		case EXP_FUNC_CALL:
+		case EXP_ADDR:
+		case EXP_PTR:
+			return expression_type(node->sons[0]);
+		case SYMBOL_IDENTIFIER:
+			return node->symbol->dataType;
+		case '+':
+		case '-':
+		case '*':
+		case '/':
+			return KW_BYTE;
+		case OPERATOR_EQ:
+		case OPERATOR_GE:
+		case OPERATOR_LE:
+		case OPERATOR_OR:
+		case OPERATOR_AND:
+		case OPERATOR_NE:
+		case '>':
+		case '<':
+			return KW_BOOL;
+	}
+	
+
+	return 0;
+}
 /*if(node->symbol->natureza == 0)
 	{
 		switch(node->type)
