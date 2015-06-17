@@ -391,17 +391,18 @@ void compare_func_type_return(astree_node *node)
 
 	if(node->type == FUNC_DEF)
 	{
-		return_type = find_func_return_type(node->sons[2]->sons[2]->sons[0], 0);
+		return_type = find_func_return_type(node->sons[2]->sons[2]->sons[0]);
+		printf("return: %i\n", return_type);
 		if(return_type == 0)
 		{
 			semanticerror = 1;
 				printf("Every function must have a return statement.\n");		
 		}else
 		{
-		
+			printf("returntype: %i, dataType: %i\n", return_type , node->sons[1]->symbol->dataType);
 			if(!(
 				(compatible_types(return_type , node->sons[1]->symbol->dataType)) || 
-				((return_type == KW_BYTE && node->symbol->dataType == KW_WORD) || (node->sons[1]->symbol->dataType == return_type ))
+				((return_type == KW_BYTE && node->sons[1]->symbol->dataType == KW_WORD) || (node->sons[1]->symbol->dataType == return_type ))
 				)
 		  	)
 			{
@@ -417,7 +418,7 @@ void compare_func_type_return(astree_node *node)
 }
 
 
-int find_func_return_type(astree_node *node, int count)
+int find_func_return_type(astree_node *node)
 {
 int ret1 = 0, ret2 = 0, i, j;
 
@@ -426,13 +427,18 @@ int ret1 = 0, ret2 = 0, i, j;
 	
 	if(node->type == KW_RETURN)
 	{
-
-		return expression_type(node->sons[0]);
+		
+		int temp = expression_type(node->sons[0]);
+		
+		return temp;
 	}
 	if(node->type == CMDS)
-	{		
-		ret1 = find_func_return_type(node->sons[0], 0);
-		ret2 = find_func_return_type(node->sons[1], 0);
+	{	
+
+
+		ret1 = find_func_return_type(node->sons[0]);
+		ret2 = find_func_return_type(node->sons[1]);
+		printf("%i , %i\n" ,ret1, ret2);
 		if(ret1 == ret2 && ret1 != 0 && ret2 != 0)
 		{
 			return ret1;
@@ -450,12 +456,24 @@ int ret1 = 0, ret2 = 0, i, j;
 	
 		
 	int aux[4];
+	
 	for(i = 0 ; i < 4 ; i++)
 	{
-		aux[i] = find_func_return_type(node->sons[i], 0);
+		aux[i] = find_func_return_type(node->sons[i]);
+		
 	}
 
+	printf("Aux: ");
+	
+	for(i = 0 ; i < 4 ; i++)
+	{
+		printf("%i ", aux[i]);
+	}
+	
+	printf("\n");
+	
 	int equals = 1, not_null = 0;
+	// o erro está aqui: deveria comparar todos os tipos compativeis
 	for(i = 0 ; i < 4 ; i++)
 	{
 		for(j = i ; j < 4 ; j++)
@@ -463,10 +481,21 @@ int ret1 = 0, ret2 = 0, i, j;
 			if(aux[i] != 0 && aux[j] != 0)
 			{
 				not_null = aux[i];
-				if(aux[i] != aux[j])
+				if(!(
+						(aux[i] == KW_BYTE && aux[j] == KW_BYTE)
+						||(aux[i] == KW_BYTE && aux[j] == KW_WORD)
+						||(aux[i] == KW_WORD && aux[j] == KW_WORD)
+						||(aux[i] == KW_WORD && aux[j] == KW_BYTE)
+						||(aux[i] == KW_BOOL && aux[j] == KW_BOOL)
+					)
+					)	
 				{
 					equals = 0;
 				}
+					else{
+
+							printf("Every pair of return statements must have compatible types\n");
+						}
 			}
 		}	
 	}
@@ -489,10 +518,11 @@ int expression_type(astree_node* node)
 	switch(node->type)
 	{
 		case SYMBOL_LIT_INTEGER:
+		case SYMBOL_LIT_CHAR:
+			return KW_BYTE;
 		case SYMBOL_LIT_FALSE:
 		case SYMBOL_LIT_TRUE: 
-		case SYMBOL_LIT_CHAR: 
-			return node->type; 
+		 	return KW_BOOL; 
 		case SYMBOL_LIT_STRING: 
 			semanticerror = 1; 
 			printf("Strings must be user only in output expressions!");
