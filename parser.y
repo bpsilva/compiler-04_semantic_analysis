@@ -34,6 +34,7 @@ extern FILE * yyin;
 %token NAT_PTR_ADDR 520
 %token TOKEN_ERROR 
 %token COUNT_DEF_ERROR 1500
+%token ERROR 1501
 
 %union
 {

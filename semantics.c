@@ -380,7 +380,7 @@ void compare_param_args_types(astree_node *node, int param[20], int index)
 	}
 }
 
-
+int flag;
 
 void compare_func_type_return(astree_node *node)
 {
@@ -391,15 +391,19 @@ void compare_func_type_return(astree_node *node)
 
 	if(node->type == FUNC_DEF)
 	{
+		flag = 0;
 		return_type = find_func_return_type(node->sons[2]->sons[2]->sons[0]);
-		printf("return: %i\n", return_type);
+		//printf("return: %i\n", return_type);
 		if(return_type == 0)
 		{
-			semanticerror = 1;
+			if(!flag)
+			{
+				semanticerror = 1;
 				printf("Every function must have a return statement.\n");		
+			}
 		}else
 		{
-			printf("returntype: %i, dataType: %i\n", return_type , node->sons[1]->symbol->dataType);
+		//	printf("returntype: %i, dataType: %i\n", return_type , node->sons[1]->symbol->dataType);
 			if(!(
 				(compatible_types(return_type , node->sons[1]->symbol->dataType)) || 
 				((return_type == KW_BYTE && node->sons[1]->symbol->dataType == KW_WORD) || (node->sons[1]->symbol->dataType == return_type ))
@@ -438,7 +442,7 @@ int ret1 = 0, ret2 = 0, i, j;
 
 		ret1 = find_func_return_type(node->sons[0]);
 		ret2 = find_func_return_type(node->sons[1]);
-		printf("%i , %i\n" ,ret1, ret2);
+		//printf("%i , %i\n" ,ret1, ret2);
 		if(ret1 == ret2 && ret1 != 0 && ret2 != 0)
 		{
 			return ret1;
@@ -462,7 +466,7 @@ int ret1 = 0, ret2 = 0, i, j;
 		aux[i] = find_func_return_type(node->sons[i]);
 		
 	}
-
+/*
 	printf("Aux: ");
 	
 	for(i = 0 ; i < 4 ; i++)
@@ -471,7 +475,7 @@ int ret1 = 0, ret2 = 0, i, j;
 	}
 	
 	printf("\n");
-	
+*/	
 	int equals = 1, not_null = 0;
 	// o erro está aqui: deveria comparar todos os tipos compativeis
 	for(i = 0 ; i < 4 ; i++)
@@ -481,31 +485,29 @@ int ret1 = 0, ret2 = 0, i, j;
 			if(aux[i] != 0 && aux[j] != 0)
 			{
 				not_null = aux[i];
-				if(!(
+				if(
+					!(
 						(aux[i] == KW_BYTE && aux[j] == KW_BYTE)
 						||(aux[i] == KW_BYTE && aux[j] == KW_WORD)
-						||(aux[i] == KW_WORD && aux[j] == KW_WORD)
 						||(aux[i] == KW_WORD && aux[j] == KW_BYTE)
+						||(aux[i] == KW_WORD && aux[j] == KW_WORD)
 						||(aux[i] == KW_BOOL && aux[j] == KW_BOOL)
 					)
-					)	
+				  )	
 				{
 					equals = 0;
+					flag = 1;
+					semanticerror = 1;
+					printf("Every pair of return statements must have compatible types\n");
 				}
-					else{
-
-							printf("Every pair of return statements must have compatible types\n");
-						}
 			}
 		}	
 	}
 
 	if(equals && not_null)
 	{
-
 		return not_null;
 	}
-
 
 	return 0;
 }
