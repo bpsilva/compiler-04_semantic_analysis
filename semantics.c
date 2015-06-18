@@ -406,7 +406,7 @@ void compare_func_type_return(astree_node *node)
 		//	printf("returntype: %i, dataType: %i\n", return_type , node->sons[1]->symbol->dataType);
 			if(!(
 				(compatible_types(return_type , node->sons[1]->symbol->dataType)) || 
-				((return_type == KW_BYTE && node->sons[1]->symbol->dataType == KW_WORD) || (node->sons[1]->symbol->dataType == return_type ))
+				(((return_type == KW_WORD && node->sons[1]->symbol->dataType == KW_BYTE))||(return_type == KW_BYTE && node->sons[1]->symbol->dataType == KW_WORD) || (node->sons[1]->symbol->dataType == return_type ))
 				)
 		  	)
 			{
@@ -466,18 +466,9 @@ int ret1 = 0, ret2 = 0, i, j;
 		aux[i] = find_func_return_type(node->sons[i]);
 		
 	}
-/*
-	printf("Aux: ");
-	
-	for(i = 0 ; i < 4 ; i++)
-	{
-		printf("%i ", aux[i]);
-	}
-	
-	printf("\n");
-*/	
+
 	int equals = 1, not_null = 0;
-	// o erro está aqui: deveria comparar todos os tipos compativeis
+
 	for(i = 0 ; i < 4 ; i++)
 	{
 		for(j = i ; j < 4 ; j++)
@@ -551,10 +542,55 @@ int expression_type(astree_node* node)
 		case '<':
 			return KW_BOOL;
 	}
+
+
+	int aux[4], i, j;
 	
+	for(i = 0 ; i < 4 ; i++)
+	{
+		aux[i] = expression_type(node->sons[i]);
+		
+	}
+
+	int equals = 1, not_null = 0;
+
+	for(i = 0 ; i < 4 ; i++)
+	{
+		for(j = i ; j < 4 ; j++)
+		{	
+			if(aux[i] != 0 && aux[j] != 0)
+			{
+				not_null = aux[i];
+				if(
+					!(
+						(aux[i] == KW_BYTE && aux[j] == KW_BYTE)
+						||(aux[i] == KW_BYTE && aux[j] == KW_WORD)
+						||(aux[i] == KW_WORD && aux[j] == KW_BYTE)
+						||(aux[i] == KW_WORD && aux[j] == KW_WORD)
+						||(aux[i] == KW_BOOL && aux[j] == KW_BOOL)
+					)
+				  )	
+				{
+					equals = 0;
+					flag = 1;
+					semanticerror = 1;
+					printf("Os elementos da expressão de retorno não tem tipos compativeis.\n");
+				}
+			}
+		}	
+	}
+
+	if(equals && not_null)
+	{
+		return not_null;
+	}
 
 	return 0;
 }
+
+
+
+
 /*if(node->symbol->natureza == 0)
 	{
 		switch(node->type)
