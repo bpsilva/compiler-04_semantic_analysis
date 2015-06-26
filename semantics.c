@@ -333,13 +333,8 @@ void types_param(astree_node *fun_def, astree_node *node, int index)
 }
 int compatible_types(int arg, int param)
 {
-	if((arg == SYMBOL_LIT_INTEGER || arg == SYMBOL_LIT_CHAR) && (param == KW_WORD || param == KW_BYTE))
-		return 1;
-
-	if((arg == SYMBOL_LIT_TRUE || arg == SYMBOL_LIT_FALSE) && param == KW_BOOL)
-		return 1;
-
-	return 0;
+	return (((arg == SYMBOL_LIT_INTEGER || arg == SYMBOL_LIT_CHAR) && (param == KW_WORD || param == KW_BYTE)) || 
+			((arg == SYMBOL_LIT_TRUE || arg == SYMBOL_LIT_FALSE) && param == KW_BOOL));
 }
 
 
@@ -393,6 +388,7 @@ void compare_func_type_return(astree_node *node)
 	{
 		flag = 0;
 		return_type = find_func_return_type(node->sons[2]->sons[2]->sons[0]);
+
 		//printf("return: %i\n", return_type);
 		if(return_type == 0)
 		{
@@ -403,7 +399,7 @@ void compare_func_type_return(astree_node *node)
 			}
 		}else
 		{
-		//	printf("returntype: %i, dataType: %i\n", return_type , node->sons[1]->symbol->dataType);
+			printf("returntype: %i, dataType: %i\n", return_type , node->sons[1]->symbol->dataType);
 			if(!(
 				(compatible_types(return_type , node->sons[1]->symbol->dataType)) || 
 				(((return_type == KW_WORD && node->sons[1]->symbol->dataType == KW_BYTE))||(return_type == KW_BYTE && node->sons[1]->symbol->dataType == KW_WORD) || (node->sons[1]->symbol->dataType == return_type ))
@@ -419,6 +415,11 @@ void compare_func_type_return(astree_node *node)
 	{
 		compare_func_type_return(node->sons[i]);
 	}
+}
+
+int compatible_types_kw( int kw_typeA , int kw_typeB)
+{
+		return ((kw_typeA == kw_typeB)||(kw_typeA == KW_BYTE && kw_typeB == KW_WORD)||(kw_typeA == KW_WORD && kw_typeB == KW_BYTE));
 }
 
 
@@ -438,8 +439,6 @@ int ret1 = 0, ret2 = 0, i, j;
 	}
 	if(node->type == CMDS)
 	{	
-
-
 		ret1 = find_func_return_type(node->sons[0]);
 		ret2 = find_func_return_type(node->sons[1]);
 		//printf("%i , %i\n" ,ret1, ret2);
@@ -476,15 +475,7 @@ int ret1 = 0, ret2 = 0, i, j;
 			if(aux[i] != 0 && aux[j] != 0)
 			{
 				not_null = aux[i];
-				if(
-					!(
-						(aux[i] == KW_BYTE && aux[j] == KW_BYTE)
-						||(aux[i] == KW_BYTE && aux[j] == KW_WORD)
-						||(aux[i] == KW_WORD && aux[j] == KW_BYTE)
-						||(aux[i] == KW_WORD && aux[j] == KW_WORD)
-						||(aux[i] == KW_BOOL && aux[j] == KW_BOOL)
-					)
-				  )	
+				if(!compatible_types_kw(aux[i], aux[j]))	
 				{
 					equals = 0;
 					flag = 1;
@@ -561,20 +552,12 @@ int expression_type(astree_node* node)
 			if(aux[i] != 0 && aux[j] != 0)
 			{
 				not_null = aux[i];
-				if(
-					!(
-						(aux[i] == KW_BYTE && aux[j] == KW_BYTE)
-						||(aux[i] == KW_BYTE && aux[j] == KW_WORD)
-						||(aux[i] == KW_WORD && aux[j] == KW_BYTE)
-						||(aux[i] == KW_WORD && aux[j] == KW_WORD)
-						||(aux[i] == KW_BOOL && aux[j] == KW_BOOL)
-					)
-				  )	
+				if(!compatible_types_kw(aux[i], aux[j]))
 				{
 					equals = 0;
 					flag = 1;
 					semanticerror = 1;
-					printf("Os elementos da expressão de retorno não tem tipos compativeis.\n");
+					//printf("The expression elements in returning statements must have compatible types.\n");
 				}
 			}
 		}	
@@ -589,7 +572,13 @@ int expression_type(astree_node* node)
 }
 
 
+void find_expressions(astree_node * node)
+{
+	if(node == 0)
+		return;
 
+
+}
 
 /*if(node->symbol->natureza == 0)
 	{
