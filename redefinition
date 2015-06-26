@@ -1,20 +1,15 @@
 byte a: 20;
 byte b: 20;
 
+word foo()
+{
+return 1;
+}
+
 bool bar2()
+byte z:3;
 {
-
-	return a==b;
-	
-
+	if(a + foo()) then {} else {} ;
+	return bar2();
 }
-bool bar()
-{
-	return 1 / bar2();
-}
-
-/*byte foo()
-{
-return bar() * 3;
-}*/
 

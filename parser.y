@@ -256,7 +256,8 @@ int main(int argc, char **argv)
 	verifyNature(astree);
 	compare_param_args(astree);
 	compare_func_type_return(astree);
-
+	find_expressions(astree);
+	
 	if(semanticerror)
 	{
 		fprintf( stderr, "Semantic error.\n");
