@@ -620,6 +620,7 @@ int expression_type_b(astree_node* node)
 				else{
 					semanticerror = 1; 
 				}
+				break;
 		case OPERATOR_EQ:
 		case OPERATOR_GE:
 		case OPERATOR_LE:
@@ -635,10 +636,16 @@ int expression_type_b(astree_node* node)
 				else{
 					semanticerror = 1; 
 				}
+				break;
+		case SIMPLE_ATRIB:
+			if(expression_type_b(node->sons[0]) != expression_type_b(node->sons[1]))
+				semanticerror = 1;
+
+			return 0;
 	}
+
 	return 0;
 }
-
 
 
 void find_expressions(astree_node * node)
@@ -660,7 +667,9 @@ void find_expressions(astree_node * node)
 	case OPERATOR_OR:
 	case OPERATOR_AND:
 	case OPERATOR_NE:
+	case SIMPLE_ATRIB:
 		expression_type_b(node);
+		break;
 	}
 int i = 0;
 	for(i = 0 ; i < 4 ; i++)

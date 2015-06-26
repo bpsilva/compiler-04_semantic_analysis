@@ -7,8 +7,9 @@ return 1;
 }
 
 bool bar2()
-byte z:3;
+bool z: TRUE;
 {
+	a = z;
 	if(a + foo()) then {} else {} ;
 	return bar2();
 }
