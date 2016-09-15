@@ -22,5 +22,6 @@ To understand the semantic criteria, please go to the work definition (in portug
 
 
 See the previous stages of the project too:  
-[First stage](https://bitbucket.org/bpsilva/compiler-02_syntactic_analysis/raw/ca77046c56d9f7fafab516dc0e3f3a504c5a924e/definition.pdf)  
-[Second stage](https://bitbucket.org/bpsilva/compiler-02_syntactic_analysis/raw/ca77046c56d9f7fafab516dc0e3f3a504c5a924e/definition.pdf)  
+[First stage: lexical analysis](https://bitbucket.org/bpsilva/compiler-01_lexical_analysis)  
+[Second stage: syntactic analysis](https://bitbucket.org/bpsilva/compiler-02_syntactic_analysis/)
+[Third stage: abstract syntax tree generation](https://bitbucket.org/bpsilva/compiler-03_abstract_syntax_tree)
