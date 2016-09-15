@@ -1,3 +1,5 @@
+This is the fourth part of the project of building my own compiler. It is part of the the grade to the course of Compilers (INF01147) at Federal University of Rio Grande do Sul.
+
 In order to run you must have flex and yacc installed (ubuntu/debian):  
  **sudo apt-get install flex**  
  **sudo apt-get install byacc**  
