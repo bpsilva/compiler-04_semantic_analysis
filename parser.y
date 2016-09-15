@@ -229,9 +229,9 @@ int main(int argc, char **argv)
 	int out;
 	astree = 0;
 
-	if(argc < 3)
+	if(argc < 2)
 	{
-		printf("****Missing parameters***\n");
+		printf("****Missing parameter***\n");
 		exit(1);
 	}
 		
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
     	exit(2);
   	}
 
-	file = fopen(argv[2], "w+");
+	
 
 	//Syntax analysis
 	yyparse();
