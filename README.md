@@ -9,7 +9,7 @@ In order to run you must have flex and yacc installed (ubuntu/debian):
 After that you just need to run the Makefile:  
  **make**
 
-This software makes lexical, syntactic and semantic analysis based of a file provided.
+This software makes lexical, syntactic and semantic analysis based on a file provided.
 It will print any error found. 
 
 In order to run:  
