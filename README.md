@@ -18,7 +18,7 @@ To understand the syntactic criteria, please go to the task definition (in portu
 [Work description: syntactic analysis](https://bitbucket.org/bpsilva/compiler-02_syntactic_analysis/raw/ca77046c56d9f7fafab516dc0e3f3a504c5a924e/definition.pdf)  
 
 To understand the semantic criteria, please go to the task definition (in portuguese):    
-[Work description: syntactic analysis](https://bitbucket.org/bpsilva/compiler-04_semantic_analysis/raw/94f1025d2b7d61948ea6d5b760fd334562b812ba/definition.pdf)  
+[Work description: semantic analysis](https://bitbucket.org/bpsilva/compiler-04_semantic_analysis/raw/94f1025d2b7d61948ea6d5b760fd334562b812ba/definition.pdf)  
 
 
 See the previous stages of the project too:  
